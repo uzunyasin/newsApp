@@ -7,10 +7,10 @@ void backScreen(context) {
 }
 
 
-void nextScreen(context, page, analyticPage) {
+void nextScreen(context, page) {
   Navigator.of(context).push(CupertinoPageRoute(
       builder: (context) => page,
-      settings: RouteSettings(name: analyticPage)
+
   ),
   );
 }

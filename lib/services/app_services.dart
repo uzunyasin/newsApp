@@ -17,7 +17,9 @@ class AppService {
       openToastLong(context, LocaleKeys.launch_url);
     }
   }
+
   static Future searchArticles(String value, int pageNumber) async {
+
     List<ArticleModelArticles> list = [];
 
     String searchText = value;
@@ -31,7 +33,6 @@ class AppService {
     if (articleList is List) {
       list = articleList.map((e) => ArticleModelArticles.fromJson(e)).toList();
     }
-     print(list.length.toString());
     return list;
   }
 }

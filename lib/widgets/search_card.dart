@@ -21,13 +21,13 @@ class SearchListTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        nextScreen(context, NewsDetailPage(articleModel: articleModel),"SearchViewDetail");
+        nextScreen(context, NewsDetailPage(articleModel: articleModel));
       },
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(context.lowMediumValue),
         ),
-        elevation: 3,
+        elevation: 5,
         color: context.colors.backgroundSearchTile,
         child: ListTile(
           contentPadding: context.paddingLowMedium,
@@ -47,6 +47,7 @@ class SearchListTitle extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
+
           trailing: Image.network(articleModel.urlToImage.toString())
         ),
       ),

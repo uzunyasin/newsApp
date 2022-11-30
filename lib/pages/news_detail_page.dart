@@ -1,12 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:news_app/core/color_extension.dart';
 import 'package:news_app/core/context_extension.dart';
 import 'package:news_app/models/article_model.dart';
-import 'package:news_app/services/app_services.dart';
+import 'package:news_app/pages/news_source.dart';
 import 'package:news_app/utils/locale_keys.dart';
+import 'package:news_app/utils/navigate.dart';
 import 'package:news_app/widgets/custom_appbar.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class NewsDetailPage extends StatefulWidget {
   NewsDetailPage({
@@ -29,7 +32,11 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
         sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
   }
 
-
+  @override
+  void initState() {
+    if (Platform.isAndroid) WebView.platform = AndroidWebView();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +68,17 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                 children: [
                   Image.network(widget.articleModel.urlToImage.toString()),
                   context.emptyMediumWidget,
+                  Text(
+                    widget.articleModel.title.toString(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: 'Rubik',
+                      fontWeight: FontWeight.w500,
+                      color: context.colors.blackColor,
+                    ),
+                  ),
+                  context.emptyMediumHighWidget,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -88,17 +106,6 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                     ],
                   ),
                   context.emptyMediumWidget,
-                  Text(
-                    widget.articleModel.title.toString(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'Rubik',
-                      fontWeight: FontWeight.w500,
-                      color: context.colors.blackColor,
-                    ),
-                  ),
-                  context.emptyMediumHighWidget,
                   Text(widget.articleModel.description.toString(),
                       textAlign: TextAlign.justify,
                       style: TextStyle(
@@ -107,37 +114,16 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                         fontWeight: FontWeight.w500,
                         color: context.colors.blackColor,
                       )),
-                  TextButton(onPressed: (){
-                    AppService().openLink(
-                        context, widget.articleModel.url.toString());
-                  }, child: const Text(LocaleKeys.go_to_source))
+                  TextButton(
+                      onPressed: () {
+                        nextScreen(
+                            context,
+                            NewsSource(
+                                url: widget.articleModel.url.toString()));
+                      },
+                      child: const Text(LocaleKeys.go_to_source))
                 ],
               )),
-          // Expanded(
-          //   child: Container(
-          //     decoration: BoxDecoration(
-          //       color: context.colors.whiteColor,
-          //       borderRadius:
-          //       BorderRadius.circular(context.mediumHighValue),
-          //     ),
-          //     padding: context.paddingMedium,
-          //     child: SingleChildScrollView(
-          //         physics: const BouncingScrollPhysics(),
-          //         child: Html(
-          //           style: {
-          //             "html": Style(
-          //               fontSize: const FontSize(16),
-          //               textAlign: TextAlign.justify,
-          //             ),
-          //             "li": Style(
-          //               margin: const EdgeInsets.only(top: 20),
-          //             )
-          //           },
-          //           data: """ ${jobDetail["content"]} """,
-          //
-          //         )),
-          //   ),
-          // )
         ],
       ),
     );

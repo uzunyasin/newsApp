@@ -2,6 +2,6 @@ class Constants {
 
 
   static const String baseUrl = "https://newsapi.org/v2/everything?q=";
-  static const apiKey = "5646d8b5b12041838344bcfbcaf0fd8f";
+  static const apiKey = "bff859bb45ad4c4f89a8f372a30f9865";
 
 }

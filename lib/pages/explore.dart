@@ -23,13 +23,16 @@ class _ExploreState extends State<Explore> {
   TextEditingController searchController = TextEditingController();
 
   bool _hasNextPage = true;
-  bool _isFirstLoadRunning = false;
   bool _isLoadMoreRunning = false;
-  //late ScrollController _controller;
+  ScrollController _controller = ScrollController();
   int _page = 1;
   late String searchText;
   bool isSearch = false;
   List<ArticleModelArticles> searchList = [];
+  List<ArticleModelArticles> fetchedArticles = [];
+
+
+
 
   search(value) {
     return FutureBuilder(
@@ -39,7 +42,7 @@ class _ExploreState extends State<Explore> {
           searchList = snapshot.data!;
           return searchList.isNotEmpty
               ? ListView.builder(
-                  //controller: _controller,
+                  controller: _controller,
                   itemCount: searchList.length,
                   itemBuilder: (context, index) {
                     var currentArticle = searchList[index];
@@ -52,7 +55,7 @@ class _ExploreState extends State<Explore> {
                     SizedBox(
                         height: context.width * 0.4,
                         child: Image.asset(
-                          "assets/images/not_found.png",
+                          "assets/not_found.png",
                           fit: BoxFit.fitWidth,
                         )),
                     context.emptyMediumWidget,
@@ -75,6 +78,28 @@ class _ExploreState extends State<Explore> {
         }
       },
     );
+  }
+
+  void _loadMore() async {
+    if (_controller.position.maxScrollExtent == _controller.offset) {
+      setState(() {
+        _isLoadMoreRunning = true;
+      });
+      _page += 1;
+      var newArticles;
+      var res = await AppService.searchArticles(searchText, _page);
+      newArticles = res;
+      searchList.addAll(newArticles);
+      setState(() {
+        _isLoadMoreRunning = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    _controller = ScrollController()..addListener(_loadMore);
+    super.initState();
   }
 
   @override
@@ -106,8 +131,21 @@ class _ExploreState extends State<Explore> {
             Expanded(
               child: search(searchText),
             ),
+          if (_isLoadMoreRunning == true)
+            const Padding(
+              padding: EdgeInsets.only(top: 10, bottom: 50),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_loadMore);
+    super.dispose();
   }
 }
